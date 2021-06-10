@@ -102,13 +102,20 @@ public class SheetBot {
         api.addMessageCreateListener(event -> {
             if(hasInfo(values, event.getMessageContent())){
                 List<Object> info=getInfo(values, event.getMessageContent());
-                String st="Name:"+info.get(0)+"\n"+
-                        "ID: "+info.get(1) +"\n"+
-                        "Department: "+info.get(2) +"\n"+
-                        "Number: "+info.get(3) +"\n"+
-                        "Mail: "+info.get(4) +"\n"+
-                        "Intake: "+info.get(5);
-                event.getChannel().sendMessage(st);
+                for (int i = 0; i < values.size(); i++) {
+                    if (values.get(i).contains(event.getMessageContent())) {
+                        info=values.get(i);
+
+                        String st="Name:"+info.get(0)+"\n"+
+                                "ID: "+info.get(1) +"\n"+
+                                "Department: "+info.get(2) +"\n"+
+                                "Number: "+info.get(3) +"\n"+
+                                "Mail: "+info.get(4) +"\n"+
+                                "Intake: "+info.get(5);
+                        event.getChannel().sendMessage(st);
+                    }
+                }
+
 
 
             }
@@ -139,6 +146,7 @@ public class SheetBot {
         return info;
 
     }
+
 
 
 }
