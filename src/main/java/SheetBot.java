@@ -15,6 +15,7 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.*;
+import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.server.Server;
 
 import java.io.*;
@@ -28,7 +29,6 @@ public class SheetBot {
 
     private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS_READONLY);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
-
 
 
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
@@ -72,7 +72,7 @@ public class SheetBot {
 
         List<List<Object>> values = result.getValues();
 
-        Scanner scr=new Scanner(System.in);
+        Scanner scr = new Scanner(System.in);
         //System.out.println("Enter ID");
         //String ss=scr.next();
 
@@ -98,10 +98,12 @@ public class SheetBot {
 
         }
         */
-
+        /*
         api.addMessageCreateListener(event -> {
+
             if(hasInfo(values, event.getMessageContent())){
-                List<Object> info=getInfo(values, event.getMessageContent());
+
+                List<Object> info;//=getInfo(values, event.getMessageContent());
                 for (int i = 0; i < values.size(); i++) {
                     if (values.get(i).contains(event.getMessageContent())) {
                         info=values.get(i);
@@ -119,16 +121,86 @@ public class SheetBot {
 
 
             }
+        });
+
+         */
+
+
+        api.addMessageCreateListener(event -> {
+            Long num=852634754994143262L;
+            Long botID=851552993689600030L;
+
+            Long s1=852600598763536455L;
+            Long HRM=852638135661101076L;
+            Long IT=852638167596662854L;
+            Long pub=852638202997243914L;
+            Long cr=852638229815361536L;
+            Long er=852638606635171890L;
+            String roleGiven="";
+
+            if(num==event.getMessage().getChannel().getId() && (event.getMessageAuthor().getId()!=botID)){
+                //event.getChannel().sendMessage("It worked");
+
+                if(hasInfo(values, event.getMessageContent())){
+                    List<Object> info=getInfo(values, event.getMessageContent());
+
+                    String department=(String)info.get(2);
+
+
+                    if(department.equalsIgnoreCase("HRM")){
+                        s1=HRM;
+                        roleGiven="HRM";
+                    }else if(department.equalsIgnoreCase("IT")){
+                        s1=IT;
+                        roleGiven="IT";
+                    }else if(department.equalsIgnoreCase("Publication")){
+                        s1=pub;
+                        roleGiven="Publication";
+                    }else if(department.equalsIgnoreCase("Creative")){
+                        s1=cr;
+                        roleGiven="Creative";
+                    }
+                }else{
+                    event.getChannel().sendMessage("Enter Valid ID");
+                }
+
+
+                api.getRoleById(s1).ifPresent(role ->
+                        role
+                                .getApi()
+                                .getUserById(event.getMessageAuthor().getId())
+                                .thenCompose(user ->  user.addRole(role))
+
+                );
+                String finalRoleGiven = roleGiven;
+                api.getRoleById(s1).ifPresent(role ->
+                        role
+                                .getApi()
+                                .getUserById(event.getMessageAuthor().getId())
+                                .thenCompose(user ->  user.sendMessage(finalRoleGiven +" Role Added Successfully"))
+
+                );
+
+
+            }
+
+
+
+
+
 
         });
 
+
+
+
     }
 
-    public static boolean hasInfo(List<List<Object>> values, String ID){
-        boolean flag=false;
+    public static boolean hasInfo(List<List<Object>> values, String ID) {
+        boolean flag = false;
         for (int i = 0; i < values.size(); i++) {
             if (values.get(i).contains(ID)) {
-                flag=true;
+                flag = true;
             }
         }
 
@@ -136,17 +208,16 @@ public class SheetBot {
         return flag;
     }
 
-    public static List<Object> getInfo(List<List<Object>> values, String ID){
-        List<Object> info=null;
+    public static List<Object> getInfo(List<List<Object>> values, String ID) {
+        List<Object> info = null;
         for (int i = 0; i < values.size(); i++) {
             if (values.get(i).contains(ID)) {
-                info=values.get(i);
+                info = values.get(i);
             }
         }
         return info;
 
     }
-
 
 
 }
